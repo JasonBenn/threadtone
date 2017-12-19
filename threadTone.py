@@ -3,12 +3,11 @@ import cv2
 import numpy as np
 
 # Parameters
-imgPath = "./path"  
 imgRadius = 500     # Number of pixels that the image radius is resized to
 
 initPin = 0         # Initial pin to start threading from 
 nPins = 200         # Number of pins on the circular loom
-nLines = 500        # Maximal number of lines
+nLines = 3000        # Maximal number of lines
 
 minLoop = 3         # Disallow loops of less than minLoop lines
 lineWidth = 3       # The number of pixels that represents the width of a thread
@@ -61,14 +60,13 @@ def linePixels(pin0, pin1):
 
     return (x.astype(np.int)-1, y.astype(np.int)-1)
 
+import sys
 
 if __name__=="__main__":
-    print banner
-
     # Load image
-    image = cv2.imread(imgPath)
+    image = cv2.imread(sys.argv[1])
 
-    print "[+] loaded " + imgPath + " for threading.."
+    print "[+] loaded " + image + " for threading.."
 
     # Crop image
     height, width = image.shape[0:2]
