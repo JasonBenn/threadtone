@@ -67,9 +67,6 @@ if __name__=="__main__":
     image_path = sys.argv[1]
     image = cv2.imread(image_path)
     image_name = image_path.split("/")[-1].split(".")[0]  # chop path and extension
-    print image_path, image_name
-
-    print "[+] loaded " + image_name + " for threading.."
 
     # Crop image
     height, width = image.shape[0:2]
@@ -77,24 +74,24 @@ if __name__=="__main__":
     topEdge = int((height - minEdge)/2)
     leftEdge = int((width - minEdge)/2)
     imgCropped = image[topEdge:topEdge+minEdge, leftEdge:leftEdge+minEdge]
-    cv2.imwrite('./results/{}-cropped.png'.format(image_name), imgCropped)
+    # cv2.imwrite('./preprocess/{}-cropped.png'.format(image_name), imgCropped)
 
     # Convert to grayscale
     imgGray = cv2.cvtColor(imgCropped, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite('./results/{}-gray.png'.format(image_name), imgGray)
+    # cv2.imwrite('./preprocess/{}-gray.png'.format(image_name), imgGray)
 
     # Resize image
     imgSized = cv2.resize(imgGray, (2*imgRadius + 1, 2*imgRadius + 1)) 
 
     # Invert image
     imgInverted = invertImage(imgSized)
-    cv2.imwrite('./results/{}-inverted.png'.format(image_name), imgInverted)
+    # cv2.imwrite('./preprocess/{}-inverted.png'.format(image_name), imgInverted)
 
     # Mask image
     imgMasked = maskImage(imgInverted, imgRadius)
-    cv2.imwrite('./results/{}-masked.png'.format(image_name), imgMasked)
+    # cv2.imwrite('./preprocess/{}-masked.png'.format(image_name), imgMasked)
 
-    print "[+] image preprocessed for threading.."
+    print "threading {}".format(image_name)
 
     # Define pin coordinates
     coords = pinCoords(imgRadius, nPins)
@@ -149,8 +146,8 @@ if __name__=="__main__":
         # plot results
         xLine, yLine = linePixels(coords[bestPin], coord)
         imgResult[yLine, xLine] = 0
-        cv2.imshow('image', imgResult)
-        cv2.waitKey(1)
+        # cv2.imshow('image', imgResult)
+        # cv2.waitKey(1)
 
         # Break if no lines possible
         if bestPin == oldPin:
@@ -165,35 +162,35 @@ if __name__=="__main__":
         sys.stdout.write("[+] Computing line " + str(line + 1) + " of " + str(nLines) + " total")
         sys.stdout.flush()
 
-    print "\n[+] Image threaded"
+    print "  done\n"
 
     # Wait for user and save before exit
     # cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    cv2.imwrite('./results/{}-threaded.png'.format(image_name), imgResult)
+    # cv2.destroyAllWindows()
+    # cv2.imwrite('./results/{}-threaded.png'.format(image_name), imgResult)
 
-    svg_output = open('./results/{}-threaded.svg'.format(image_name),'wb')
-    header="""<?xml version="1.0" standalone="no"?>
-    <svg width="%i" height="%i" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    """ % (width, height)
-    footer="</svg>"
-    svg_output.write(header)
-    pather = lambda d : '<path d="%s" stroke="black" stroke-width="0.5" fill="none" />\n' % d
-    pathstrings=[]
-    pathstrings.append("M" + "%i %i" % coords[lines[0][0]] + " ")
-    for l in lines:
-        nn = coords[l[1]]
-        pathstrings.append("L" + "%i %i" % nn + " ")
-    pathstrings.append("Z")
-    d = "".join(pathstrings)
-    svg_output.write(pather(d))
-    svg_output.write(footer)
-    svg_output.close()
+    # svg_output = open('./postprocess/{}-threaded.svg'.format(image_name),'wb')
+    # header="""<?xml version="1.0" standalone="no"?>
+    # <svg width="%i" height="%i" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    # """ % (width, height)
+    # footer="</svg>"
+    # svg_output.write(header)
+    # pather = lambda d : '<path d="%s" stroke="black" stroke-width="0.5" fill="none" />\n' % d
+    # pathstrings=[]
+    # pathstrings.append("M" + "%i %i" % coords[lines[0][0]] + " ")
+    # for l in lines:
+    #     nn = coords[l[1]]
+    #     pathstrings.append("L" + "%i %i" % nn + " ")
+    # pathstrings.append("Z")
+    # d = "".join(pathstrings)
+    # svg_output.write(pather(d))
+    # svg_output.write(footer)
+    # svg_output.close()
 
-    csv_output = open('./results/{}-threaded.csv'.format(image_name),'wb')
-    csv_output.write("x1,y1,x2,y2\n")
-    csver = lambda c1,c2 : "%i,%i" % c1 + "," + "%i,%i" % c2 + "\n"
-    for l in lines:
-        csv_output.write(csver(coords[l[0]],coords[l[1]]))
-    csv_output.close()
+    # csv_output = open('./postprocess/{}-threaded.csv'.format(image_name),'wb')
+    # csv_output.write("x1,y1,x2,y2\n")
+    # csver = lambda c1,c2 : "%i,%i" % c1 + "," + "%i,%i" % c2 + "\n"
+    # for l in lines:
+    #     csv_output.write(csver(coords[l[0]],coords[l[1]]))
+    # csv_output.close()
 

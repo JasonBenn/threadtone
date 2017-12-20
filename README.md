@@ -14,4 +14,11 @@ A set of two example images can be found below. Please refer to my [blog](http:/
 
 ## Snippets
 
+Thread all files in a folder
 `for img in `ls ~/Desktop/`; do python threadTone.py ~/Desktop/$img; done`
+
+Extract PNG frames from a movie
+`ffmpeg -i ~/Desktop/haven.mov ./originals/haven-mov/frame-%03d.png`
+
+Delete duplicate frames
+`fdupes -dN .`
