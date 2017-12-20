@@ -64,9 +64,12 @@ import sys
 
 if __name__=="__main__":
     # Load image
-    image = cv2.imread(sys.argv[1])
+    image_path = sys.argv[1]
+    image = cv2.imread(image_path)
+    image_name = image_path.split("/")[-1].split(".")[0]  # chop path and extension
+    print image_path, image_name
 
-    print "[+] loaded " + image + " for threading.."
+    print "[+] loaded " + image_name + " for threading.."
 
     # Crop image
     height, width = image.shape[0:2]
@@ -74,22 +77,22 @@ if __name__=="__main__":
     topEdge = int((height - minEdge)/2)
     leftEdge = int((width - minEdge)/2)
     imgCropped = image[topEdge:topEdge+minEdge, leftEdge:leftEdge+minEdge]
-    cv2.imwrite('./cropped.png', imgCropped)
+    cv2.imwrite('./results/{}-cropped.png'.format(image_name), imgCropped)
 
     # Convert to grayscale
     imgGray = cv2.cvtColor(imgCropped, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite('./gray.png', imgGray)
+    cv2.imwrite('./results/{}-gray.png'.format(image_name), imgGray)
 
     # Resize image
     imgSized = cv2.resize(imgGray, (2*imgRadius + 1, 2*imgRadius + 1)) 
 
     # Invert image
     imgInverted = invertImage(imgSized)
-    cv2.imwrite('./inverted.png', imgInverted)
+    cv2.imwrite('./results/{}-inverted.png'.format(image_name), imgInverted)
 
     # Mask image
     imgMasked = maskImage(imgInverted, imgRadius)
-    cv2.imwrite('./masked.png', imgMasked)
+    cv2.imwrite('./results/{}-masked.png'.format(image_name), imgMasked)
 
     print "[+] image preprocessed for threading.."
 
@@ -165,11 +168,11 @@ if __name__=="__main__":
     print "\n[+] Image threaded"
 
     # Wait for user and save before exit
-    cv2.waitKey(0)
+    # cv2.waitKey(0)
     cv2.destroyAllWindows()
-    cv2.imwrite('./threaded.png', imgResult)
+    cv2.imwrite('./results/{}-threaded.png'.format(image_name), imgResult)
 
-    svg_output = open('threaded.svg','wb')
+    svg_output = open('./results/{}-threaded.svg'.format(image_name),'wb')
     header="""<?xml version="1.0" standalone="no"?>
     <svg width="%i" height="%i" version="1.1" xmlns="http://www.w3.org/2000/svg">
     """ % (width, height)
@@ -187,7 +190,7 @@ if __name__=="__main__":
     svg_output.write(footer)
     svg_output.close()
 
-    csv_output = open('threaded.csv','wb')
+    csv_output = open('./results/{}-threaded.csv'.format(image_name),'wb')
     csv_output.write("x1,y1,x2,y2\n")
     csver = lambda c1,c2 : "%i,%i" % c1 + "," + "%i,%i" % c2 + "\n"
     for l in lines:
