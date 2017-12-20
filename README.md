@@ -12,6 +12,6 @@ A set of two example images can be found below. Please refer to my [blog](http:/
 
 ![Threaded portrait of Angelina](/assets/angelineThreaded.png "Threaded portrait of Angelina")
 
-## License
+## Snippets
 
-This script is released under MIT License.
+`for img in `ls ~/Desktop/`; do python threadTone.py ~/Desktop/$img; done`
